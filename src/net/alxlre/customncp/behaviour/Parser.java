@@ -32,10 +32,19 @@ public class Parser {
 	}
 
 	private void processDirectCommand(String line) {
-		String keyword = line.substring(line.indexOf(' '));
+		String keyword = line.split("\"")[0].substring(1);
 		if (!keywordsContainsString(keyword)) {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not identify keyword " + keyword);
 			interrupt();
+		}
+		
+		switch (keyword) {
+		case "teleport":
+			//Teleport
+			break;
+		case "chat":
+			//Chat
+			break;
 		}
 	}
 
