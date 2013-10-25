@@ -12,13 +12,15 @@ import org.bukkit.Bukkit;
 
 public class Parser {
 
-	private Set<String> keywords;
+	private Set<String> commandKeywords;
+	private Set<String> controlKeywords;
 	private BufferedReader br;
 
 	public Parser() {
-		keywords = new HashSet<String>();
-		keywords.add("teleport");
-		keywords.add("chat");
+		commandKeywords = new HashSet<String>();
+		controlKeywords = new HashSet<String>();
+		commandKeywords.add("teleport");
+		commandKeywords.add("chat");
 	}
 
 	public void parse(File file) throws IOException {
@@ -49,10 +51,16 @@ public class Parser {
 	}
 
 	private void processControl(String line) {
-		line = line.substring(1);
+		line.substring(1);
 		if (!line.endsWith(")")) {
 			Bukkit.getLogger().log(Level.SEVERE, "Could not find matching parantheses:\n" + line);
 			interrupt();
+		}
+		
+		line = line.substring(line.length(), line.length() - 1);
+		
+		if (controlKeywordsContainsString(line.substring(line.length(), line.indexOf(' ')))) {
+			
 		}
 	}
 	
@@ -66,7 +74,16 @@ public class Parser {
 
 	private boolean keywordsContainsString(String str) {
 		
-		for (String s : keywords) {
+		for (String s : commandKeywords) {
+			if (str == s) return true;
+		}
+		
+		return false;
+	}
+	
+private boolean controlKeywordsContainsString(String str) {
+		
+		for (String s : controlKeywords) {
 			if (str == s) return true;
 		}
 		
@@ -75,7 +92,7 @@ public class Parser {
 
 	/*
 	 * EXAMPLE BEHAVIOUR FILE 
-	 * #repeat=true, time=10s 
+	 * #repeat=true, pause=10s 
 	 * (start) 
 	 * chat "Hello!"
 	 * (wait 1000) 
