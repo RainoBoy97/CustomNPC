@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.alxlre.customnpc.utils.Log;
+
 import org.bukkit.Bukkit;
 
 public class Parser {
@@ -15,6 +17,7 @@ public class Parser {
 	private Set<String> commandKeywords;
 	private Set<String> controlKeywords;
 	private BufferedReader br;
+	private boolean isHeaderParsed = false;
 
 	public Parser() {
 		commandKeywords = new HashSet<String>();
@@ -27,16 +30,27 @@ public class Parser {
 		br = new BufferedReader(new FileReader(file));
 		String line;
 		while ((line = br.readLine()) != null) {
-			if (line.startsWith("(")) processControl(line);
-			else processDirectCommand(line);
+			if (!isHeaderParsed) {
+				processHeader(line, file);
+				isHeaderParsed = true;
+			}
+			if (line.startsWith("(")) processControl(line, file);
+			else processDirectCommand(line, file);
 			br.close();
 		}
 	}
 
-	private void processDirectCommand(String line) {
+	private void processHeader(String line, File file) {
+		if (!line.startsWith("#")) {
+			Log.log(Level.SEVERE, "Unknown header in file " + file.getName());
+			interrupt();
+		}
+	}
+
+	private void processDirectCommand(String line, File file) {
 		String keyword = line.split("\"")[0].substring(1);
 		if (!keywordsContainsString(keyword)) {
-			Bukkit.getLogger().log(Level.SEVERE, "Could not identify keyword " + keyword);
+			Log.log(Level.SEVERE, "Could not identify keyword " + keyword + "in file " + file.getName());
 			interrupt();
 		}
 		
@@ -50,10 +64,10 @@ public class Parser {
 		}
 	}
 
-	private void processControl(String line) {
+	private void processControl(String line, File file) {
 		line.substring(1);
 		if (!line.endsWith(")")) {
-			Bukkit.getLogger().log(Level.SEVERE, "Could not find matching parantheses:\n" + line);
+			Log.log(Level.SEVERE, "Could not find matching parantheses in file " + file.getName() + " on line:\n" + line);
 			interrupt();
 		}
 		
