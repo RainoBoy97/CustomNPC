@@ -1,4 +1,4 @@
-package net.alxlre.customncp.behaviour;
+package net.alxlre.customnpc.behaviour;
 
 import java.io.BufferedReader;
 import java.io.File;

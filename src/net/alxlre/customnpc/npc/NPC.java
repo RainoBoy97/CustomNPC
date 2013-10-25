@@ -1,4 +1,4 @@
-package net.alxlre.customncp.npc;
+package net.alxlre.customnpc.npc;
 
 import org.bukkit.Location;
 import org.bukkit.World;
